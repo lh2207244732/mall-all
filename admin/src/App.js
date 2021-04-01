@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
 
+import Login from '../src/pages/login'
+
 class App extends Component {
     render() {
         return (
             <div className="App">
-                Hello
+                <Login />
             </div>
         )
     }

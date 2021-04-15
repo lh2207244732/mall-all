@@ -1,48 +1,31 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+
 
 import { Form, Input, Button, Row, Col } from 'antd';
 import { UserOutlined, LockOutlined, BorderHorizontalOutlined } from '@ant-design/icons';
 
-import axios from 'axios'
+import { actionCreator } from './store'
+
 
 import './index.less'
 
-
 class Login extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            captcha: ''
-        }
-        this.getCaptcha = this.getCaptcha.bind(this)
-    }
-    async getCaptcha() {
-        // 发送 get 请求
-        const result = await axios({
-            method: 'get',
-            url: '/v1/users/captcha',
-        })
-        if (result.status === 200) {
-            this.setState({
-                captcha: result.data.data
-            })
-        }
-    }
-    onFinish(values) {
-        console.log('Received values of form: ', values);
-    };
-    //组件挂载完毕
-    async componentDidMount() {
-        this.getCaptcha()
+
+
+    componentDidMount() {
+        this.props.handleCaptcha()
     }
     render() {
+        const { captcha, handleLogin } = this.props
+
         {
             return (
                 <div className="Login">
                     <Form
                         name="normal_login"
                         className="login-form"
-                        onFinish={this.onFinish}
+                        onFinish={handleLogin}
                     >
                         <Form.Item
                             name="username"
@@ -95,7 +78,7 @@ class Login extends Component {
                                 </Col>
                                 {/* 验证码 */}
                                 <Col span={12}>
-                                    <div onClick={this.getCaptcha} className="captcha" dangerouslySetInnerHTML={{ __html: this.state.captcha }} ></div>
+                                    <div onClick={this.getCaptcha} className="captcha" dangerouslySetInnerHTML={{ __html: captcha }} ></div>
                                 </Col>
                             </Row>
 
@@ -112,4 +95,19 @@ class Login extends Component {
         }
     }
 }
-export default Login
+const mapStateToProps = (data) => {
+    return {
+        captcha: data.get('login').get('captcha')
+    }
+}
+const mapDispatchToProps = (dispatch) => {
+    return {
+        handleCaptcha: () => {
+            dispatch(actionCreator.getCaptchaAction())
+        },
+        handleLogin: (values) => {
+            dispatch(actionCreator.getLoginAction(values))
+        }
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Login)

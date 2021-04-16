@@ -4,8 +4,8 @@ import { Route, Switch, Redirect } from 'react-router-dom'
 import { getUsername } from './util'
 
 
-import Login from './pages/Login'
-import Home from './pages/Home'
+import Login from './pages/Login/index'
+import Home from './pages/Home/index'
 
 const ProtectRoute = ({ component: Component, ...rest }) => <Route {...rest} render={() => (getUsername() ? <Component /> : <Redirect to="/login" />)} />
 

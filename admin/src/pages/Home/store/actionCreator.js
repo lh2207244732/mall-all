@@ -2,17 +2,20 @@ import * as types from './actionTypes'
 import api from '../../../api'
 
 
-const setCaptcha = (captcha) => ({
-    type: types.SET_CAPTCHA,
-    payload: captcha
+const setCounts = (payload) => ({
+    type: types.SET_COUNTS,
+    payload: payload
 })
 
-export const getCaptchaAction = () => {
+export const getCountsAction = () => {
     return async function (dispatch) {
-        const result = await api.getCaptcha()
+        const result = await api.getCounts()
         if (result.code == 0) {
-            dispatch(setCaptcha(result.data))
+            dispatch(setCounts(result.data))
         }
     }
 }
+
+
+
 

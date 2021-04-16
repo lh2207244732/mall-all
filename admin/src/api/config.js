@@ -6,4 +6,6 @@ export const API_CONFIG = {
     //方法名称:     [请求地址,请求方法]
     getCaptcha: ['/users/captcha', 'get'],
     login: ['/users/login', 'post'],
+    getCounts: ['/counts', 'get'],
+    logout: ['/users/logout', 'get'],
 }

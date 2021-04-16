@@ -1,1 +1,1 @@
-export const SET_CAPTCHA = 'login@set_captcha'
+export const SET_COUNTS = 'home@set_counts'

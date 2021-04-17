@@ -8,6 +8,7 @@ import CustomHeader from '../../components/Header'
 import CustomSider from '../../components/Sider'
 import UploadImage from '../../components/UploadImage'
 import { CATEGORY_ICON_UPLOAD } from '../../api/config'
+import api from '../../api'
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -40,6 +41,8 @@ class CategorySave extends Component {
         this.handleIcon = this.handleIcon.bind(this)
         this.handleFinish = this.handleFinish.bind(this)
         this.handleValidate = this.handleValidate.bind(this)
+
+        this.formRef = React.createRef()
     }
     handleIcon(icon) {
         this.setState({
@@ -71,14 +74,45 @@ class CategorySave extends Component {
         }
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         this.props.handleLevelCategories()
+        // 如果存在id则表示是编辑分类
+        if (this.state.id) {
+            const result = await api.getCategoriesDetail({ id: this.state.id })
+            console.log(result)
+            if (result.code == 0) {
+                const { data } = result
+                this.formRef.current.setFieldsValue({
+                    pid: data.pid,
+                    name: data.name,
+                    mobileName: data.mobileName
+                })
+                this.setState({
+                    icon: data.icon
+                })
+            }
+        } else {
+            this.setState({
+                icon: ''
+            })
+        }
     }
 
     render() {
-        const { iconValidate } = this.state
+        const { iconValidate, icon } = this.state
         const { categories } = this.props
         const options = categories.map(category => <Option key={category._id} value={category._id}>{category.name}</Option>)
+        let fileList = []
+        if (icon) {
+            fileList.push({
+                uid: '-1',
+                name: 'image.png',
+                status: 'done',
+                url: icon,
+            })
+        } else {
+            fileList = []
+        }
         return (
             <div className="CategorySave">
                 <Layout>
@@ -104,6 +138,7 @@ class CategorySave extends Component {
                                     name="control-hooks"
                                     onFinish={this.handleFinish}
                                     onFinishFailed={this.handleValidate}
+                                    ref={this.formRef}
                                 >
                                     <Form.Item
                                         name="pid"
@@ -155,6 +190,7 @@ class CategorySave extends Component {
                                             max={1}
                                             action={CATEGORY_ICON_UPLOAD}
                                             getImageUrlList={this.handleIcon}
+                                            fileList={fileList}
                                         />
                                     </Form.Item>
                                     <Form.Item {...tailLayout}>

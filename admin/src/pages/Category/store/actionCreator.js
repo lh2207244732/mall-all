@@ -18,14 +18,24 @@ const setPage = (payload) => ({
     type: types.SET_PAGE,
     payload: payload
 })
+const clearPage = () => ({
+    type: types.CLEAR_PAGE
+})
 
 export const getSaveAction = (values) => {
     return async function (dispatch, getState) {
         try {
-            const result = await api.addCategory(values)
+            let request = api.addCategory
+            let actionMessage = '添加分类成功'
+            if (values.id) {
+                request = api.updateCategory
+                actionMessage = '修改分类成功'
+            }
+            const result = await request(values)
             if (result.code == 0) {
-                message.success('添加分类成功', 1)
+                message.success(actionMessage, 1)
                 dispatch(setCategoies(result.data))
+                dispatch(clearPage())
             } else {
                 message.error(result.message, 1)
             }

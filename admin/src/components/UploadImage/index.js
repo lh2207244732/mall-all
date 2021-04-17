@@ -31,24 +31,20 @@ class UploadImage extends Component {
             previewImage: '',
             previewTitle: '',
             fileList: [],
+            isUpdate: false
         }
-        this.handleCancel = this.handleCancel.bind(this)
-        this.handlePreview = this.handlePreview.bind(this)
+
         this.handleChange = this.handleChange.bind(this)
     }
-    handleCancel() {
-        this.setState({ previewVisible: false });
-    }
-    async handlePreview(file) {
-        if (!file.url && !file.preview) {
-            file.preview = await getBase64(file.originFileObj);
+    static getDerivedStateFromProps(props, state) {
+        if (state.isUpdate) {//更新时不更改state
+            return null
+        } else {//根据父组件的fileList初始化state中的fileList
+            return {
+                fileList: props.fileList
+            }
         }
-        this.setState({
-            previewImage: file.url || file.preview,
-            previewVisible: true,
-            previewTitle: file.name || file.url.substring(file.url.lastIndexOf('/') + 1),
-        });
-    };
+    }
     handleChange({ fileList }) {
         const imageUrlList = fileList.map(item => {
             if (item.response && item.response.status == 'done') {
@@ -57,7 +53,8 @@ class UploadImage extends Component {
         }).join(',')
         this.props.getImageUrlList(imageUrlList)
         this.setState({
-            fileList: fileList
+            fileList: fileList,
+            isUpdate: true
         })
     }
     render() {
@@ -82,16 +79,7 @@ class UploadImage extends Component {
                 >
                     {fileList.length >= max ? null : uploadButton}
                 </Upload>
-                <Modal
-                    visible={previewVisible}
-                    title={previewTitle}
-                    footer={null}
-                    onCancel={this.handleCancel}
-                >
-                    <img alt="example" style={{ width: '100%' }} src={previewImage} />
-                </Modal>
-            </Fragment>
-        )
+            </Fragment>)
     }
 }
 

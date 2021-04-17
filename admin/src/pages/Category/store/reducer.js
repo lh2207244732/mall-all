@@ -30,7 +30,9 @@ function reducer(state = defaultState, action) {
     if (action.type == types.PAGE_REQUEST_END) {
         return state.set('isFetching', false)
     }
-
+    if (action.type == types.CLEAR_PAGE) {
+        return state.set('list', [])
+    }
     return state
 }
 

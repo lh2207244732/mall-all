@@ -14,6 +14,8 @@ export default class index extends Component {
             <Layout style={{ padding: '0 24px 24px' }}>
                 <Breadcrumb style={{ margin: '16px 0' }}>
                     <Breadcrumb.Item>首页</Breadcrumb.Item>
+                    <Breadcrumb.Item>用户</Breadcrumb.Item>
+                    <Breadcrumb.Item>用户列表</Breadcrumb.Item>
                 </Breadcrumb>
                 <Content
                     className="site-layout-background"

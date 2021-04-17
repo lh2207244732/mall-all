@@ -6,10 +6,10 @@ const UserModel = require('../models/user.js')
 
 const hmac = require('./hmac.js')
 
-const { getRandomNum, getRandomStr} = require('./random.js')
+const { getRandomNum, getRandomStr } = require('./random.js')
 
 //启动数据库
-mongoose.connect('mongodb://localhost:27017/kmallm11', { useNewUrlParser: true });
+mongoose.connect('mongodb://localhost:27017/kmallm03', { useNewUrlParser: true });
 
 const db = mongoose.connection;
 

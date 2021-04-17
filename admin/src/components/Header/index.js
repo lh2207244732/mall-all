@@ -17,6 +17,7 @@ export default class index extends Component {
         this.handleLogout = this.handleLogout.bind(this)
     }
     async handleLogout() {
+        console.log(111)
         const result = await api.logout()
         removeUsername()
         goLogin()
@@ -26,7 +27,7 @@ export default class index extends Component {
         const menu = (
             <Menu>
                 <Menu.Item key="0">
-                    <a onClick={() => { this.handleLogout }} >退出</a>
+                    <a onClick={this.handleLogout} >退出</a>
                 </Menu.Item>
             </Menu>
         );

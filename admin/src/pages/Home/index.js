@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-
-
 import { Layout } from 'antd';
 
 import { actionCreator } from './store';
@@ -13,10 +11,6 @@ import CustomSider from '../../components/Sider'
 import CustomLayout from '../../components/Layout'
 
 import './index.less'
-
-
-
-
 
 class Home extends Component {
 

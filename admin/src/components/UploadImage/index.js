@@ -33,9 +33,23 @@ class UploadImage extends Component {
             fileList: [],
             isUpdate: false
         }
-
+        this.handleCancel = this.handleCancel.bind(this)
+        this.handlePreview = this.handlePreview.bind(this)
         this.handleChange = this.handleChange.bind(this)
     }
+    handleCancel() {
+        this.setState({ previewVisible: false });
+    }
+    async handlePreview(file) {
+        if (!file.url && !file.preview) {
+            file.preview = await getBase64(file.originFileObj);
+        }
+        this.setState({
+            previewImage: file.url || file.preview,
+            previewVisible: true,
+            previewTitle: file.name || file.url.substring(file.url.lastIndexOf('/') + 1),
+        });
+    };
     static getDerivedStateFromProps(props, state) {
         if (state.isUpdate) {//更新时不更改state
             return null
@@ -79,7 +93,16 @@ class UploadImage extends Component {
                 >
                     {fileList.length >= max ? null : uploadButton}
                 </Upload>
-            </Fragment>)
+                <Modal
+                    visible={previewVisible}
+                    title={previewTitle}
+                    footer={null}
+                    onCancel={this.handleCancel}
+                >
+                    <img alt="example" style={{ width: '100%' }} src={previewImage} />
+                </Modal>
+            </Fragment>
+        )
     }
 }
 

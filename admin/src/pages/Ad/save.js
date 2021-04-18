@@ -1,17 +1,19 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { actionCreator } from './store';
-
 import { Layout, Breadcrumb, Form, Input, Button, Select } from 'antd';
+const { Content } = Layout;
+const { Option } = Select;
+
+
 
 import CustomHeader from '../../components/Header'
 import CustomSider from '../../components/Sider'
 import UploadImage from '../../components/UploadImage'
-import { CATEGORY_ICON_UPLOAD } from '../../api/config'
+
+import { AD_IMAGE_UPLOAD } from '../../api/config'
+import { actionCreator } from './store';
 import api from '../../api'
 
-const { Content } = Layout;
-const { Option } = Select;
 const layout = {
     labelCol: {
         span: 6,
@@ -27,103 +29,95 @@ const tailLayout = {
     },
 };
 
-class CategorySave extends Component {
+class AdSave extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            id: this.props.match.params.categoryId,
-            icon: '',
-            iconValidate: {
+            id: this.props.match.params.adId,
+            image: '',
+            imageValidate: {
                 help: '',
                 validateStatus: ''
             }
         }
-        this.handleIcon = this.handleIcon.bind(this)
+        this.handleImage = this.handleImage.bind(this)
         this.handleFinish = this.handleFinish.bind(this)
         this.handleValidate = this.handleValidate.bind(this)
-
         this.formRef = React.createRef()
     }
-    handleIcon(icon) {
+    async componentDidMount() {
+        if (this.state.id) {
+            const result = await api.getAdsDetail({ id: this.state.id })
+            if (result.code == 0) {
+                const data = result.data
+                this.formRef.current.setFieldsValue({
+                    name: data.name,
+                    link: data.link,
+                    position: data.position
+                })
+                this.setState({
+                    image: data.image
+                })
+            }
+        } else {
+            this.setState({
+                image: ''
+            })
+        }
+    }
+    handleImage(image) {
         this.setState({
-            icon: icon,
-            iconValidate: {
+            image: image,
+            imageValidate: {
                 help: '',
                 validateStatus: ''
             }
         })
     }
     handleFinish(values) {
-        const { icon, id } = this.state
+        const { image, id } = this.state
         this.handleValidate()
-        if (icon) {
-            values.icon = icon
+        if (image) {
+            values.image = image
             values.id = id
             this.props.handleSave(values)
         }
     }
     handleValidate() {
-        const { icon } = this.state
-        if (!icon) {
+        const { image } = this.state
+        if (!image) {
             this.setState({
-                iconValidate: {
-                    help: '请上传手机图标',
+                imageValidate: {
+                    help: '请上传广告图片',
                     validateStatus: 'error'
                 }
             })
         }
     }
-
-    async componentDidMount() {
-        this.props.handleLevelCategories()
-        // 如果存在id则表示是编辑分类
-        if (this.state.id) {
-            const result = await api.getCategoriesDetail({ id: this.state.id })
-            console.log(result)
-            if (result.code == 0) {
-                const { data } = result
-                this.formRef.current.setFieldsValue({
-                    pid: data.pid,
-                    name: data.name,
-                    mobileName: data.mobileName
-                })
-                this.setState({
-                    icon: data.icon
-                })
-            }
-        } else {
-            this.setState({
-                icon: ''
-            })
-        }
-    }
-
     render() {
-        const { iconValidate, icon } = this.state
-        const { categories } = this.props
-        const options = categories.map(category => <Option key={category._id} value={category._id}>{category.name}</Option>)
+        const { imageValidate, image } = this.state
         let fileList = []
-        if (icon) {
+        if (image) {
             fileList.push({
                 uid: '-1',
                 name: 'image.png',
                 status: 'done',
-                url: icon,
+                url: image,
             })
         } else {
             fileList = []
         }
         return (
-            <div className="CategorySave">
+            <div className="AdSave">
                 <Layout>
                     <CustomHeader />
                     <Layout>
                         <CustomSider />
                         <Layout style={{ padding: '0 24px 24px' }}>
                             <Breadcrumb style={{ margin: '16px 0' }}>
-                                <Breadcrumb.Item>分类管理</Breadcrumb.Item>
-                                <Breadcrumb.Item>分类</Breadcrumb.Item>
-                                <Breadcrumb.Item>添加分类</Breadcrumb.Item>
+                                <Breadcrumb.Item>广告管理</Breadcrumb.Item>
+                                <Breadcrumb.Item>广告</Breadcrumb.Item>
+                                <Breadcrumb.Item>{this.state.id ? '编辑广告' : '添加广告'}</Breadcrumb.Item>
                             </Breadcrumb>
                             <Content
                                 className="site-layout-background"
@@ -141,55 +135,55 @@ class CategorySave extends Component {
                                     ref={this.formRef}
                                 >
                                     <Form.Item
-                                        name="pid"
-                                        label="父级分类"
+                                        name="name"
+                                        label="广告名称"
                                         rules={[
                                             {
                                                 required: true,
-                                                message: '请选择父级分类'
+                                                message: '请输入广告名称'
+                                            },
+                                        ]}
+                                    >
+                                        <Input />
+                                    </Form.Item>
+                                    <Form.Item
+                                        name="link"
+                                        label="广告地址"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: '请输入广告地址'
+                                            },
+                                        ]}
+                                    >
+                                        <Input />
+                                    </Form.Item>
+                                    <Form.Item
+                                        name="position"
+                                        label="广告位置"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: '请选择广告位置'
                                             },
                                         ]}
                                     >
                                         <Select
-                                            placeholder="请选择父级分类"
+                                            placeholder="请选择广告位置"
                                         >
-                                            <Option value="0">根分类</Option>
-                                            {options}
+                                            <Option value="1">电脑端首页轮播图</Option>
+                                            <Option value="2">移动端首页轮播图</Option>
                                         </Select>
                                     </Form.Item>
                                     <Form.Item
-                                        name="name"
-                                        label="分类名称"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: '请输入分类名称'
-                                            },
-                                        ]}
-                                    >
-                                        <Input />
-                                    </Form.Item>
-                                    <Form.Item
-                                        name="mobileName"
-                                        label="手机分类名称"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: '请输入手机分类名称'
-                                            },
-                                        ]}
-                                    >
-                                        <Input />
-                                    </Form.Item>
-                                    <Form.Item
-                                        label="手机分类图标"
+                                        label="广告图片"
                                         required={true}
-                                        {...iconValidate}
+                                        {...imageValidate}
                                     >
                                         <UploadImage
                                             max={1}
-                                            action={CATEGORY_ICON_UPLOAD}
-                                            getImageUrlList={this.handleIcon}
+                                            action={AD_IMAGE_UPLOAD}
+                                            getImageUrlList={this.handleImage}
                                             fileList={fileList}
                                         />
                                     </Form.Item>
@@ -207,7 +201,6 @@ class CategorySave extends Component {
         )
     }
 }
-
 const mapStateToProps = (state) => ({
     categories: state.get('category').get('categories'),
 })
@@ -219,4 +212,4 @@ const mapDispatchToProps = (dispatch) => ({
         dispatch(actionCreator.getLevelCategoriesAction())
     }
 })
-export default connect(mapStateToProps, mapDispatchToProps)(CategorySave)
+export default connect(mapStateToProps, mapDispatchToProps)(AdSave)

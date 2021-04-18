@@ -8,6 +8,11 @@ import Login from './pages/Login'
 import Home from './pages/Home'
 import User from './pages/User'
 import Category from './pages/Category'
+import Attr from './pages/Attr'
+import Product from './pages/Product'
+import Order from './pages/Order'
+import Ad from './pages/Ad'
+import Pwd from './pages/Pwd'
 
 
 const ProtectRoute = ({ component: Component, ...rest }) => <Route {...rest} render={() => (getUsername() ? <Component /> : <Redirect to="/login" />)} />
@@ -23,6 +28,11 @@ class App extends Component {
                     <ProtectRoute exact path="/" component={Home} />
                     <ProtectRoute path="/user" component={User} />
                     <ProtectRoute path="/category" component={Category} />
+                    <ProtectRoute path="/attr" component={Attr} />
+                    <ProtectRoute path="/product" component={Product} />
+                    <ProtectRoute path="/order" component={Order} />
+                    <ProtectRoute path="/ad" component={Ad} />
+                    <ProtectRoute path="/pwd" component={Pwd} />
                     <LoginRoute path="/login" component={Login} />
                     <Route path="*" component={NotFound} />
                 </Switch>

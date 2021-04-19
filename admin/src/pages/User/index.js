@@ -11,7 +11,6 @@ import CustomSider from '../../components/Sider'
 import { actionCreator } from './store';
 import { formatDate } from '../../util'
 
-import './index.less'
 
 class User extends Component {
 

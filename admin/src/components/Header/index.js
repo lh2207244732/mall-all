@@ -8,6 +8,8 @@ const { Header } = Layout;
 import { getUsername, removeUsername, goLogin } from '../../util'
 import api from '../../api'
 
+import './index.less'
+
 
 
 export default class index extends Component {

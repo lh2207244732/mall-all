@@ -10,7 +10,6 @@ import CustomHeader from '../../components/Header'
 import CustomSider from '../../components/Sider'
 import CustomLayout from '../../components/Layout'
 
-import './index.less'
 
 class Home extends Component {
 
